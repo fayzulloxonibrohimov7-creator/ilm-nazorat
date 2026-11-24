@@ -1,0 +1,602 @@
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>ILM Nazorat</title>
+<style>
+/* layout: committed dark dashboard — fixed left sidebar (desktop) / top tab strip (mobile) + topbar + metric-card grid + growth card; one visual world, no light variant */
+:root{
+  --bg:#0A0F1C; --bg-elev:#0F1629; --surface:#131C33; --surface-2:#1A2440; --line:#232E4D;
+  --ink:#E7ECF7; --ink-soft:#AEB9D4; --muted:#7585AA;
+  --blue:#4C8DFF; --blue-soft:#15213C; --gold:#D7A94A;
+  --good:#36C27B; --good-soft:#102A20; --warn:#E3B23A; --warn-soft:#2E2412; --bad:#F0565B; --bad-soft:#331519;
+  --c-blue:#4C8DFF; --c-purple:#9B7BF0; --c-orange:#F0974A; --c-red:#F0565B; --c-amber:#E3B23A;
+  --c-pink:#F06FA0; --c-teal:#34C6C6; --c-green:#36C27B;
+  --radius:14px;
+  --font-head:'Space Grotesk',Inter,system-ui,sans-serif;
+  --font-body:'Inter',system-ui,sans-serif;
+  color-scheme: dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:14px;line-height:1.5}
+h1,h2,h3{font-family:var(--font-head);margin:0;text-wrap:balance}
+.gutter{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+button{font-family:inherit;cursor:pointer}
+table{border-collapse:collapse;width:100%;font-size:13px}
+[hidden]{display:none!important}
+svg.ic{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* ---- login ---- */
+#login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;padding-block:40px;background:radial-gradient(circle at 30% 20%,#101c38,var(--bg) 60%)}
+.login-card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:32px 28px;width:100%;max-width:360px;box-shadow:0 30px 60px -25px rgba(0,0,0,.6)}
+.wordmark{display:flex;align-items:baseline;gap:8px;margin-bottom:4px}
+.wordmark b{font-family:var(--font-head);font-size:28px;color:var(--ink);letter-spacing:.5px}
+.wordmark span{font-family:var(--font-head);font-size:13px;color:var(--gold);font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+.login-card p.sub{color:var(--muted);margin:0 0 22px;font-size:13px}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12px;color:var(--ink-soft);margin-bottom:5px;font-weight:600}
+.field input{width:100%;padding:10px 12px;border-radius:9px;border:1px solid var(--line);background:var(--bg-elev);color:var(--ink);font-size:14px}
+.field input:focus{outline:2px solid var(--blue);outline-offset:1px}
+.btn-primary{width:100%;margin-top:6px;padding:11px;border-radius:9px;border:none;background:var(--blue);color:#06101F;font-weight:700;font-size:14px}
+.btn-primary:hover{filter:brightness(1.08)}
+#login-error{color:var(--bad);font-size:12.5px;margin-top:10px;min-height:1em}
+.login-foot{margin-top:20px;padding-top:16px;border-top:1px solid var(--line);color:var(--muted);font-size:11.5px}
+
+/* ---- shell ---- */
+#app-shell{min-height:100vh;display:flex}
+.sidebar{width:232px;flex-shrink:0;background:var(--bg-elev);border-right:1px solid var(--line);display:flex;flex-direction:column;padding:18px 14px;gap:18px}
+.sidebar .brand{display:flex;align-items:center;gap:10px;padding:0 6px}
+.brand .mark{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--blue),var(--gold));display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-weight:700;color:#06101F;font-size:14px;flex-shrink:0}
+.brand .txt b{display:block;font-family:var(--font-head);font-size:14.5px;color:var(--ink)}
+.brand .txt span{display:block;font-size:10.5px;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+.sidebar .search{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:8px 10px;color:var(--muted);font-size:12.5px}
+.sidebar .search input{background:transparent;border:none;color:var(--ink);font-size:12.5px;width:100%;outline:none}
+.sidebar nav{display:flex;flex-direction:column;gap:2px;margin-top:4px}
+.sidebar .tab{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:9px;color:var(--ink-soft);font-size:13px;font-weight:600}
+.sidebar .tab svg.ic{width:17px;height:17px}
+.sidebar .tab.active{background:var(--blue-soft);color:var(--blue)}
+.sidebar .tab:hover:not(.active){background:var(--surface)}
+.sidebar .foot{margin-top:auto;font-size:11px;color:var(--muted);padding:0 6px}
+
+.tabs-mobile{display:none}
+
+.main-col{flex:1;min-width:0;display:flex;flex-direction:column}
+header.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:var(--bg-elev);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;padding:12px 20px;flex-wrap:wrap}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:11;background:var(--bg-elev)}
+.filial-chip{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--muted)}
+.filial-chip .dot{width:7px;height:7px;border-radius:50%;background:var(--muted)}
+.davomat-chip{display:flex;align-items:center;gap:7px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:12px;color:var(--muted)}
+.davomat-chip svg.ic{width:15px;height:15px;color:var(--muted)}
+.month-chip{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:7px 12px;font-size:12.5px;color:var(--ink-soft);font-weight:600}
+.month-chip button{background:none;border:none;color:var(--muted);font-size:13px;line-height:1}
+header.topbar .who{margin-left:auto;display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--muted)}
+header.topbar .who b{color:var(--ink)}
+#logout-btn{border:1px solid var(--line);background:transparent;color:var(--ink-soft);border-radius:7px;padding:6px 10px;font-size:12px}
+#logout-btn:hover{border-color:var(--bad);color:var(--bad)}
+
+main{flex:1;padding:20px 20px 48px;display:flex;flex-direction:column;gap:20px}
+.section-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.section-head h2{font-size:17px}
+.section-head .meta{font-size:12px;color:var(--muted)}
+.hint{font-size:12.5px;color:var(--muted);margin-top:-6px;background:var(--surface);border:1px dashed var(--line);border-radius:9px;padding:9px 12px}
+
+/* metric grid (overview) */
+.metric-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+@media (max-width:1180px){.metric-grid{grid-template-columns:repeat(3,1fr)}}
+@media (max-width:720px){.metric-grid{grid-template-columns:repeat(2,1fr)}}
+.metric-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:14px;min-width:0;display:flex;flex-direction:column;gap:8px}
+.metric-card .icon-chip{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.metric-card .title{font-size:12.5px;font-weight:700;color:var(--ink)}
+.metric-card .why{font-size:11.5px;color:var(--muted);line-height:1.45}
+
+/* card */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px;min-width:0}
+.card-title{font-size:13px;font-weight:700;color:var(--ink-soft);margin:0 0 10px;text-transform:uppercase;letter-spacing:.03em}
+
+.growth-card{display:flex;flex-direction:column;gap:14px}
+.growth-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.growth-head h3{font-size:15px}
+.growth-head .meta{font-size:12px;color:var(--muted)}
+.range-chip{background:var(--bg-elev);border:1px solid var(--line);border-radius:9px;padding:7px 12px;font-size:12px;color:var(--ink-soft)}
+.placeholder-chart{border:1px dashed var(--line);border-radius:10px;padding:22px;display:flex;align-items:center;gap:16px;color:var(--muted);background:repeating-linear-gradient(135deg,transparent,transparent 10px,var(--surface-2) 10px,var(--surface-2) 11px)}
+.placeholder-chart .icn{width:40px;height:40px;border-radius:10px;background:var(--blue-soft);color:var(--blue);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.placeholder-chart p{margin:0;font-size:12.5px;color:var(--muted)}
+
+/* table wrapper */
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius)}
+.tbl-wrap table{min-width:560px}
+.tbl-wrap th,.tbl-wrap td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+.tbl-wrap th{background:var(--surface-2);font-size:11.5px;text-transform:uppercase;letter-spacing:.03em;color:var(--muted);font-weight:700;position:sticky;top:0}
+.tbl-wrap tbody tr:last-child td{border-bottom:none}
+.tbl-wrap tbody tr:hover{background:var(--surface-2)}
+.num{font-variant-numeric:tabular-nums;text-align:right}
+
+/* badges */
+.badge{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:999px;font-size:11.5px;font-weight:700}
+.badge.good{background:var(--good-soft);color:var(--good)}
+.badge.warn{background:var(--warn-soft);color:var(--warn)}
+.badge.bad{background:var(--bad-soft);color:var(--bad)}
+.badge.neutral{background:var(--surface-2);color:var(--muted)}
+.badge::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+
+/* sparkline (kept for kelmayotganlar tab, which may get real data earliest) */
+.spark-wrap{display:flex;align-items:flex-end;gap:14px}
+.spark-wrap svg{flex-shrink:0}
+.spark-caption{font-size:12px;color:var(--muted)}
+
+/* schedule tools */
+.sched-controls{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.sched-controls .field{margin-bottom:0;min-width:140px;flex:1}
+.free-list{display:flex;flex-direction:column;gap:8px}
+.free-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 12px;background:var(--good-soft);border-radius:9px}
+.free-row .name{font-weight:700;color:var(--ink)}
+.free-row .load{font-size:12px;color:var(--muted)}
+.empty-note{padding:12px;text-align:center;color:var(--muted);font-size:13px}
+
+.matrix-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius)}
+.matrix{border-collapse:collapse;min-width:900px}
+.matrix th,.matrix td{border:1px solid var(--line);padding:6px 8px;font-size:11.5px;text-align:center;white-space:nowrap}
+.matrix th.teacher-col,.matrix td.teacher-col{text-align:left;position:sticky;left:0;background:var(--surface-2);z-index:1;font-weight:700}
+.matrix th{background:var(--surface-2);color:var(--muted);font-weight:700}
+.matrix td.busy{background:var(--blue-soft);color:var(--blue);font-weight:600}
+.matrix td.free{background:var(--good-soft);color:var(--good)}
+.matrix td.off{background:var(--surface-2);color:var(--muted)}
+
+select.status-select{font-size:12px;padding:4px 7px;border-radius:7px;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+
+@media (max-width:860px){
+  .sidebar{display:none}
+  .tabs-mobile{display:flex;gap:4px;overflow-x:auto;background:var(--bg-elev);border-bottom:1px solid var(--line)}
+  .tabs-mobile .tab{flex-shrink:0;padding:11px 14px;font-size:12.5px;font-weight:600;color:var(--muted);border-bottom:2px solid transparent;white-space:nowrap}
+  .tabs-mobile .tab.active{color:var(--blue);border-color:var(--blue)}
+}
+</style>
+
+<!-- ===================== LOGIN ===================== -->
+<div id="login-screen" class="gutter">
+  <div class="login-card">
+    <div class="wordmark"><b>ILM</b><span>Nazorat</span></div>
+    <p class="sub">O'quv bo'limi davomat va jadval nazorat paneli</p>
+    <form id="login-form">
+      <div class="field"><label for="f-login">Login</label><input id="f-login" autocomplete="username" required></div>
+      <div class="field"><label for="f-pass">Parol</label><input id="f-pass" type="password" autocomplete="current-password" required></div>
+      <div class="field"><label for="f-code">Maxfiy kod</label><input id="f-code" autocomplete="off" required></div>
+      <button class="btn-primary" type="submit">Kirish</button>
+      <div id="login-error"></div>
+    </form>
+    <div class="login-foot">Faqat o'quv bo'limi rahbari ruxsat bergan xodimlar uchun.</div>
+  </div>
+</div>
+
+<!-- ===================== APP ===================== -->
+<div id="app-shell" hidden>
+  <aside class="sidebar">
+    <div class="brand"><div class="mark">IL</div><div class="txt"><b>ILM Akademiyasi</b><span>Nazorat</span></div></div>
+    <div class="search"><svg class="ic" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input placeholder="Qidirish" disabled></div>
+    <nav id="tabs">
+      <a class="tab" data-route="overview"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>Umumiy ko'rinish</a>
+      <a class="tab" data-route="teachers"><svg class="ic" viewBox="0 0 24 24"><path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v4c0 1.5 3 3 6 3s6-1.5 6-3v-4"/></svg>Ustozlar</a>
+      <a class="tab" data-route="schedule"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>Dars jadvali</a>
+      <a class="tab" data-route="groups"><svg class="ic" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Guruhlar</a>
+      <a class="tab" data-route="absentees"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Kelmayotganlar</a>
+      <a class="tab" data-route="anomalies"><svg class="ic" viewBox="0 0 24 24"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Anomaliyalar</a>
+    </nav>
+    <div class="foot">Ma'lumot kutilmoqda</div>
+  </aside>
+
+  <div class="main-col">
+    <header class="topbar gutter">
+      <div class="filial-chip"><span class="dot"></span>Filial: belgilanmagan</div>
+      <div class="davomat-chip"><svg class="ic" viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>Davomat % — jadval kelgach hisoblanadi</div>
+      <div class="month-chip"><button type="button" id="month-prev">‹</button><span id="month-label"></span><button type="button" id="month-next">›</button></div>
+      <div class="who"><b id="who-name">—</b><button id="logout-btn" type="button">Chiqish</button></div>
+    </header>
+    <nav class="tabs-mobile" id="tabs-mobile"></nav>
+    <main id="main"></main>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+/* ---------------- icon library ---------------- */
+var ICONS = {
+  cap:'<path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v4c0 1.5 3 3 6 3s6-1.5 6-3v-4"/>',
+  layers:'<polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 12 12 17 22 12"/><polyline points="2 17 12 22 22 17"/>',
+  alert:'<path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>',
+  clock:'<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+  userx:'<path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="18" y1="8" x2="23" y2="13"/><line x1="23" y1="8" x2="18" y2="13"/>',
+  pause:'<rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/>',
+  card:'<rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/>',
+  userplus:'<path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="17" y1="11" x2="23" y2="11"/>',
+  dollar:'<circle cx="12" cy="12" r="10"/><path d="M12 6.5v11M15.2 9.3c0-1.3-1.5-2.3-3.2-2.3s-3.2 1-3.2 2.3 1.5 1.8 3.2 2.2 3.2 1 3.2 2.3-1.5 2.3-3.2 2.3-3.2-1-3.2-2.3"/>',
+  play:'<circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16"/>',
+  undo:'<path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>',
+  check:'<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>'
+};
+function icon(name,color){
+  return '<span class="icon-chip" style="background:'+color+'22;color:'+color+'">'+
+    '<svg class="ic" viewBox="0 0 24 24">'+ICONS[name]+'</svg></span>';
+}
+
+/* ---------------- credentials (maintained by Claude on request) ---------------- */
+var CREDENTIALS = [
+  { login:"admin", pass:"ILM2026", code:"0000", name:"Vaqtinchalik admin" }
+];
+
+/* ---------------- weekly schedule vocabulary ---------------- */
+var DAYS = ["Dush","Sesh","Chor","Pay","Juma","Shan","Yak"];
+var SLOTS = ["08:00-10:00","10:00-12:00","12:00-14:00","14:00-16:00","16:00-18:00","18:00-20:00"];
+
+/* ---------------- state: filled only from real db data, never invented ---------------- */
+var state = {
+  seeded:false, updatedAt:null,
+  teachers:[], groups:[], absentees:[], anomalies:[], trend:[]
+};
+
+/* ---------------- card definitions for the overview (no numbers until real data arrives) ---------------- */
+var OVERVIEW_CARDS = [
+  { key:"active_students", icon:"cap", color:"var(--c-blue)", title:"Faol talabalar", why:"Hozir o'qishni davom ettirayotgan, muzlatilmagan va chiqib ketmagan talabalar soni." },
+  { key:"active_groups", icon:"layers", color:"var(--c-purple)", title:"Faol guruhlar", why:"Kamida bitta faol talabasi bo'lgan, hozir dars o'tilayotgan guruhlar soni." },
+  { key:"absent3", icon:"alert", color:"var(--c-orange)", title:"Ketma-ket 3 darsga kelmaganlar", why:"Davomat jadvalida so'nggi 3 ta darsga qatnashmagan talabalar." },
+  { key:"trial_overdue", icon:"clock", color:"var(--c-red)", title:"Sinov muddati o'tgan talabalar", why:"Sinov (probatsiya) muddati tugagan, lekin holati hali yangilanmagan talabalar." },
+  { key:"trial_dropout", icon:"userx", color:"var(--c-orange)", title:"Sinov darsidan tark etganlar", why:"Sinov darsiga kelib, keyin guruhga qo'shilmagan talabalar." },
+  { key:"active_dropout", icon:"clock", color:"var(--c-amber)", title:"Faol guruhni tark etganlar", why:"Faol guruhda o'qiyotgan bo'lsa-da, davom etmay qolgan (chiqib ketgan) talabalar." },
+  { key:"frozen", icon:"pause", color:"var(--c-pink)", title:"Muzlatilgan talabalar", why:"Vaqtincha to'xtatilgan — na faol, na chiqib ketgan hisoblanadigan talabalar." },
+  { key:"paid_month", icon:"card", color:"var(--c-teal)", title:"Bu oy to'lov qilgan talabalar", why:"Joriy oyda kamida bitta to'lov amalga oshirgan talabalar soni." },
+  { key:"joined_month", icon:"userplus", color:"var(--c-green)", title:"Bu oy qo'shilgan talabalar", why:"Joriy oyda yangi ro'yxatdan o'tgan yoki guruhga qo'shilgan talabalar." },
+  { key:"debtors", icon:"dollar", color:"var(--c-red)", title:"Qarzdor talabalar", why:"To'lov muddati o'tgan, hali qarzi yopilmagan talabalar." },
+  { key:"unfrozen", icon:"play", color:"var(--c-teal)", title:"Muzlagandan tiklangan talabalar", why:"Muzlatilgan holatdan qaytadan faol holatga o'tgan talabalar." },
+  { key:"debtors_new", icon:"dollar", color:"var(--c-pink)", title:"Bu oy qo'shilgandan qarzdorlar", why:"Joriy oyda qo'shilgan, ammo hozir qarzi bor talabalar." },
+  { key:"debtors_old", icon:"dollar", color:"var(--c-red)", title:"Eski oylardagi qarzdorlar", why:"Oldingi oylardan beri qarzi davom etayotgan talabalar." },
+  { key:"returned", icon:"undo", color:"var(--c-blue)", title:"Ketgandan so'ng qaytib kelgan talabalar", why:"Markazni tark etib, keyinchalik qaytadan qo'shilgan talabalar." },
+  { key:"left_active", icon:"check", color:"var(--c-green)", title:"Ketganlar ichidagi faollar", why:"Markazni tark etgan talabalar ichidan hozir boshqa guruhda faol bo'lganlar." }
+];
+
+/* ---------------- helpers ---------------- */
+function el(tag,attrs,children){
+  var n=document.createElement(tag);
+  if(attrs) for(var k in attrs){
+    if(k==="class") n.className=attrs[k];
+    else if(k==="html") n.innerHTML=attrs[k];
+    else n.setAttribute(k,attrs[k]);
+  }
+  (children||[]).forEach(function(c){ if(c!=null) n.appendChild(typeof c==="string"?document.createTextNode(c):c); });
+  return n;
+}
+function badge(text,kind){ return el("span",{class:"badge "+kind},[text]); }
+function statusKind(s){
+  if(s==="Yopildi") return "good";
+  if(s==="Bog'lanildi") return "warn";
+  return "bad";
+}
+
+/* ---------------- render: overview ---------------- */
+function renderOverview(root){
+  root.appendChild(el("div",{class:"section-head"},[
+    el("h2",{},["Umumiy ko'rinish"]),
+    el("span",{class:"meta"},["Yangilangan: "+(state.updatedAt||"ma'lumot kutilmoqda")])
+  ]));
+  if(!state.seeded) root.appendChild(el("div",{class:"hint"},["Har bir kartochka hozircha nima uchun ekanini tushuntiradi. Umumiy o'quvchilar jadvali va dars jadvalini yuborganingizdan so'ng, shu kartochkalarga aynan shu ma'lumotdan hisoblangan raqamlar qo'yiladi."]));
+
+  var grid = el("div",{class:"metric-grid"});
+  OVERVIEW_CARDS.forEach(function(c){
+    grid.appendChild(el("div",{class:"metric-card"},[
+      el("span",{html:icon(c.icon,c.color)}),
+      el("div",{class:"title"},[c.title]),
+      el("div",{class:"why"},[c.why])
+    ]));
+  });
+  root.appendChild(grid);
+
+  var growth = el("div",{class:"card growth-card"},[
+    el("div",{class:"growth-head"},[
+      el("div",{},[
+        el("h3",{},["Faol talabalarning o'sishi"]),
+        el("div",{class:"meta"},["Oylar kesimida faol talabalar soni — jadval kelgach chiziladi"])
+      ]),
+      el("span",{class:"range-chip"},["Oraliq: ma'lumot kutilmoqda"])
+    ])
+  ]);
+  var ph = el("div",{class:"placeholder-chart"},[
+    el("span",{class:"icn",html:'<svg class="ic" viewBox="0 0 24 24"><polyline points="3 17 9 11 13 15 21 6"/></svg>'}),
+    el("p",{},["Umumiy o'quvchilar jadvalini yuborsangiz, har oy uchun faol talabalar soni va o'zgarish foizi shu yerda grafik ko'rinishida chiziladi."])
+  ]);
+  growth.appendChild(ph);
+  root.appendChild(growth);
+}
+
+/* ---------------- data accessor for the other tabs (real data only — empty until provided) ---------------- */
+function renderTeachers(root){
+  root.appendChild(el("div",{class:"section-head"},[
+    el("h2",{},["Ustozlar"]),
+    el("span",{class:"meta"},[state.teachers.length+" ustoz"])
+  ]));
+  if(!state.teachers.length){
+    root.appendChild(el("div",{class:"card"},[el("div",{class:"empty-note"},["Ustozlar ro'yxati hali yuborilmagan."])]));
+    return;
+  }
+  var wrap = el("div",{class:"tbl-wrap"});
+  var table = el("table");
+  table.appendChild(el("thead",{},[el("tr",{},[
+    el("th",{},["Ustoz"]),el("th",{},["Guruh soni"]),el("th",{},["Faol o'quvchi"]),
+    el("th",{},["Faol emas"]),el("th",{},["Ishlamaydigan kun"])
+  ])]));
+  var tbody = el("tbody");
+  state.teachers.forEach(function(t){
+    tbody.appendChild(el("tr",{},[
+      el("td",{},[t.name]),
+      el("td",{class:"num"},[String(t.groups)]),
+      el("td",{class:"num"},[String(t.activeStudents)]),
+      el("td",{class:"num"},[String(t.inactiveStudents)]),
+      el("td",{},[(t.offDays&&t.offDays.length)?t.offDays.join(", "):"—"])
+    ]));
+  });
+  table.appendChild(tbody);
+  wrap.appendChild(table);
+  root.appendChild(wrap);
+}
+
+function teacherBusyAt(t,day,slot){
+  return (t.busy||[]).find(function(b){return b.day===day && b.slot===slot;});
+}
+function teacherOffAt(t,day){ return (t.offDays||[]).indexOf(day) !== -1; }
+
+function renderSchedule(root){
+  root.appendChild(el("div",{class:"section-head"},[
+    el("h2",{},["Dars jadvali"]),
+    el("span",{class:"meta"},["Yangi guruh ochish uchun bo'sh vaqt topish"])
+  ]));
+  if(!state.teachers.length){
+    root.appendChild(el("div",{class:"card"},[el("div",{class:"empty-note"},["Dars jadvali hali yuborilmagan."])]));
+    return;
+  }
+
+  var daySel = el("select",{class:"status-select",id:"sched-day"});
+  DAYS.forEach(function(dy){ daySel.appendChild(el("option",{value:dy},[dy])); });
+  var slotSel = el("select",{class:"status-select",id:"sched-slot"});
+  SLOTS.forEach(function(sl){ slotSel.appendChild(el("option",{value:sl},[sl])); });
+
+  var controls = el("div",{class:"card"},[
+    el("div",{class:"card-title"},["Qaysi kun va vaqtda qaysi ustozlar bo'sh?"]),
+    el("div",{class:"sched-controls"},[
+      el("div",{class:"field"},[el("label",{},["Kun"]),daySel]),
+      el("div",{class:"field"},[el("label",{},["Vaqt"]),slotSel])
+    ]),
+    el("div",{id:"free-results",style:"margin-top:12px"})
+  ]);
+  root.appendChild(controls);
+
+  function renderFree(){
+    var day=daySel.value, slot=slotSel.value;
+    var box=document.getElementById("free-results");
+    box.innerHTML="";
+    var list=el("div",{class:"free-list"});
+    var any=false;
+    state.teachers.forEach(function(t){
+      if(teacherOffAt(t,day)) return;
+      var busy=teacherBusyAt(t,day,slot);
+      if(busy) return;
+      any=true;
+      list.appendChild(el("div",{class:"free-row"},[
+        el("span",{class:"name"},[t.name]),
+        el("span",{class:"load"},[t.groups+" guruh, "+t.activeStudents+" faol o'quvchi — bo'sh"])
+      ]));
+    });
+    if(!any) list.appendChild(el("div",{class:"empty-note"},["Bu vaqtda bo'sh ustoz yo'q."]));
+    box.appendChild(list);
+  }
+  daySel.addEventListener("change",renderFree);
+  slotSel.addEventListener("change",renderFree);
+
+  var matrixCard = el("div",{class:"card"},[el("div",{class:"card-title"},["Barcha ustozlar — haftalik jadval"])]);
+  var mwrap = el("div",{class:"matrix-wrap"});
+  var mtable = el("table",{class:"matrix"});
+  var headRow = el("tr",{},[el("th",{class:"teacher-col"},["Ustoz"])]);
+  DAYS.forEach(function(dy){ SLOTS.forEach(function(sl){ headRow.appendChild(el("th",{},[dy+" "+sl.split("-")[0]])); }); });
+  var thead=el("thead",{},[headRow]);
+  var mbody=el("tbody");
+  state.teachers.forEach(function(t){
+    var row=el("tr",{},[el("td",{class:"teacher-col"},[t.name])]);
+    DAYS.forEach(function(dy){
+      SLOTS.forEach(function(sl){
+        if(teacherOffAt(t,dy)){ row.appendChild(el("td",{class:"off"},["—"])); }
+        else {
+          var b=teacherBusyAt(t,dy,sl);
+          if(b) row.appendChild(el("td",{class:"busy"},[b.group]));
+          else row.appendChild(el("td",{class:"free"},["bo'sh"]));
+        }
+      });
+    });
+    mbody.appendChild(row);
+  });
+  mtable.appendChild(thead); mtable.appendChild(mbody);
+  mwrap.appendChild(mtable);
+  matrixCard.appendChild(mwrap);
+  matrixCard.appendChild(el("div",{class:"hint",style:"margin-top:10px"},["Ko'k — band (guruh nomi bilan). Yashil — bo'sh. Kul rang — ustoz shu kuni ishlamaydi."]));
+  root.appendChild(matrixCard);
+  renderFree();
+}
+
+function renderGroups(root){
+  root.appendChild(el("div",{class:"section-head"},[
+    el("h2",{},["Guruhlar"]),
+    el("span",{class:"meta"},[state.groups.length+" guruh"])
+  ]));
+  if(!state.groups.length){
+    root.appendChild(el("div",{class:"card"},[el("div",{class:"empty-note"},["Guruhlar ro'yxati hali yuborilmagan."])]));
+    return;
+  }
+  var wrap=el("div",{class:"tbl-wrap"});
+  var table=el("table");
+  table.appendChild(el("thead",{},[el("tr",{},[
+    el("th",{},["Guruh"]),el("th",{},["Ustoz"]),el("th",{},["Jadval"]),
+    el("th",{},["Faol"]),el("th",{},["Faol emas"]),el("th",{},["Jami"])
+  ])]));
+  var tbody=el("tbody");
+  state.groups.forEach(function(g){
+    tbody.appendChild(el("tr",{},[
+      el("td",{},[g.name]),el("td",{},[g.teacher]),el("td",{},[g.schedule]),
+      el("td",{class:"num"},[String(g.active)]),
+      el("td",{class:"num"},[String(g.inactive)]),
+      el("td",{class:"num"},[String(g.active+g.inactive)])
+    ]));
+  });
+  table.appendChild(tbody); wrap.appendChild(table); root.appendChild(wrap);
+}
+
+function renderAbsentees(root){
+  root.appendChild(el("div",{class:"section-head"},[
+    el("h2",{},["Kelmayotganlar"]),
+    el("span",{class:"meta"},["Ketma-ket 3+ darsga kelmagan o'quvchilar"])
+  ]));
+  if(!state.absentees.length){
+    root.appendChild(el("div",{class:"card"},[el("div",{class:"empty-note"},["Ro'yxat hali yuborilmagan."])]));
+    return;
+  }
+  var wrap=el("div",{class:"tbl-wrap"});
+  var table=el("table");
+  table.appendChild(el("thead",{},[el("tr",{},[
+    el("th",{},["O'quvchi"]),el("th",{},["Guruh"]),el("th",{},["Ustoz"]),el("th",{},["Kun"]),
+    el("th",{},["Telefon"]),el("th",{},["Holat"]),el("th",{},["Sabab"]),el("th",{},["Qaytish sanasi"])
+  ])]));
+  var tbody=el("tbody");
+  state.absentees.forEach(function(a){
+    tbody.appendChild(el("tr",{},[
+      el("td",{},[a.name]),el("td",{},[a.group]),el("td",{},[a.teacher]),
+      el("td",{class:"num"},[String(a.days)]),el("td",{},[a.phone]),
+      el("td",{},[badge(a.status,statusKind(a.status))]),
+      el("td",{},[a.reason]),el("td",{},[a.returnDate])
+    ]));
+  });
+  table.appendChild(tbody); wrap.appendChild(table); root.appendChild(wrap);
+}
+
+function renderAnomalies(root){
+  root.appendChild(el("div",{class:"section-head"},[
+    el("h2",{},["Anomaliyalar"]),
+    el("span",{class:"meta"},["Jadvaldagi nomuvofiqliklar"])
+  ]));
+  if(!state.anomalies.length){
+    root.appendChild(el("div",{class:"card"},[el("div",{class:"empty-note"},["Hozircha belgilangan anomaliya yo'q."])]));
+    return;
+  }
+  var list = el("div",{style:"display:flex;flex-direction:column;gap:10px"});
+  state.anomalies.forEach(function(a){
+    var kind = a.severity==="bad" ? "bad" : "warn";
+    list.appendChild(el("div",{class:"card"},[
+      el("div",{style:"display:flex;align-items:center;gap:10px;margin-bottom:6px"},[badge(a.type,kind)]),
+      el("div",{},[a.description])
+    ]));
+  });
+  root.appendChild(list);
+}
+
+/* ---------------- routing ---------------- */
+var ROUTES = {
+  overview: renderOverview, teachers: renderTeachers, schedule: renderSchedule,
+  groups: renderGroups, absentees: renderAbsentees, anomalies: renderAnomalies
+};
+var ROUTE_ORDER = ["overview","teachers","schedule","groups","absentees","anomalies"];
+var ROUTE_LABEL = {overview:"Umumiy",teachers:"Ustozlar",schedule:"Jadval",groups:"Guruhlar",absentees:"Kelmayotganlar",anomalies:"Anomaliya"};
+
+(function buildMobileTabs(){
+  var host=document.getElementById("tabs-mobile");
+  ROUTE_ORDER.forEach(function(r){
+    host.appendChild(el("a",{class:"tab",["data-route"]:r},[ROUTE_LABEL[r]]));
+  });
+})();
+
+function currentRoute(){
+  var h=(location.hash||"").replace("#","");
+  return ROUTES[h] ? h : "overview";
+}
+function renderRoute(){
+  var route=currentRoute();
+  document.querySelectorAll("[data-route]").forEach(function(t){
+    t.classList.toggle("active", t.getAttribute("data-route")===route);
+  });
+  var main=document.getElementById("main");
+  main.innerHTML="";
+  ROUTES[route](main);
+}
+window.addEventListener("hashchange",renderRoute);
+document.addEventListener("click",function(e){
+  var t=e.target.closest("[data-route]");
+  if(!t) return;
+  e.preventDefault();
+  location.hash = t.getAttribute("data-route");
+});
+
+/* ---------------- month chip (display-only, reflects real current date) ---------------- */
+(function monthChip(){
+  var MONTHS=["Yanvar","Fevral","Mart","Aprel","May","Iyun","Iyul","Avgust","Sentabr","Oktabr","Noyabr","Dekabr"];
+  var d=new Date();
+  var idx=d.getMonth(), year=d.getFullYear();
+  function paint(){ document.getElementById("month-label").textContent = MONTHS[idx]+" "+year; }
+  document.getElementById("month-prev").addEventListener("click",function(){ idx--; if(idx<0){idx=11;year--;} paint(); });
+  document.getElementById("month-next").addEventListener("click",function(){ idx++; if(idx>11){idx=0;year++;} paint(); });
+  paint();
+})();
+
+/* ---------------- auth ---------------- */
+function tryLogin(login,pass,code){
+  return CREDENTIALS.find(function(c){ return c.login===login && c.pass===pass && c.code===code; });
+}
+function showApp(user){
+  document.getElementById("login-screen").hidden=true;
+  document.getElementById("app-shell").hidden=false;
+  document.getElementById("who-name").textContent=user.name;
+  try{ sessionStorage.setItem("ilm-nazorat-user", user.login); }catch(e){}
+  if(!location.hash) location.hash="overview";
+  renderRoute();
+}
+document.getElementById("login-form").addEventListener("submit",function(e){
+  e.preventDefault();
+  var login=document.getElementById("f-login").value.trim();
+  var pass=document.getElementById("f-pass").value;
+  var code=document.getElementById("f-code").value.trim();
+  var user=tryLogin(login,pass,code);
+  var err=document.getElementById("login-error");
+  if(user){ err.textContent=""; showApp(user); }
+  else { err.textContent="Login, parol yoki kod xato."; }
+});
+document.getElementById("logout-btn").addEventListener("click",function(){
+  try{ sessionStorage.removeItem("ilm-nazorat-user"); }catch(e){}
+  document.getElementById("app-shell").hidden=true;
+  document.getElementById("login-screen").hidden=false;
+  document.getElementById("f-pass").value="";
+  document.getElementById("f-code").value="";
+});
+(function restoreSession(){
+  try{
+    var saved=sessionStorage.getItem("ilm-nazorat-user");
+    if(saved){
+      var u=CREDENTIALS.find(function(c){return c.login===saved;});
+      if(u) showApp(u);
+    }
+  }catch(e){}
+})();
+
+/* ---------------- live data via db capability (populated only once Claude writes real data) ---------------- */
+function normalizeRemote(doc){
+  state.seeded = true;
+  state.updatedAt = doc.updatedAt || null;
+  state.teachers = doc.teachers || [];
+  state.groups = doc.groups || [];
+  state.absentees = doc.absentees || [];
+  state.anomalies = doc.anomalies || [];
+  state.trend = doc.trend || [];
+  if(!document.getElementById("app-shell").hidden) renderRoute();
+}
+(async function connectDb(){
+  try{
+    if(!window.claude || !window.claude.use) return;
+    var db = await window.claude.use("db");
+    if(!db) return;
+    db.doc("app/data").onSnapshot(function(snap){
+      if(snap.exists){ normalizeRemote(snap.data()); }
+    }, function(e){ /* silent: keep showing explanatory empty state */ });
+  }catch(e){ /* capability unavailable in this view */ }
+})();
+
+})();
+</script>
