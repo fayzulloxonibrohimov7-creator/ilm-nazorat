@@ -883,7 +883,8 @@ document.addEventListener("click",function(e){
 
 /* ---------------- auth ---------------- */
 function tryLogin(login,pass,code){
-  return USERS.find(function(c){ return c.login===login && c.pass===pass && c.code===code; });
+  var lc=login.toLowerCase();
+  return USERS.find(function(c){ return c.login.toLowerCase()===lc && c.pass===pass && c.code===code; });
 }
 function showApp(user){
   document.getElementById("login-screen").hidden=true;
