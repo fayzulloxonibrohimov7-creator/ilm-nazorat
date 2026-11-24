@@ -3,11 +3,11 @@
 <style>
 /* layout: committed dark dashboard — fixed left sidebar (desktop) / top tab strip (mobile) + topbar + metric-card grid + growth card; one visual world, no light variant */
 :root{
-  --bg:#0A0F1C; --bg-elev:#0F1629; --surface:#131C33; --surface-2:#1A2440; --line:#232E4D;
-  --ink:#E7ECF7; --ink-soft:#AEB9D4; --muted:#7585AA;
-  --blue:#4C8DFF; --blue-soft:#15213C; --gold:#D7A94A;
+  --bg:#0A101F; --bg-elev:#0D1830; --surface:#112142; --surface-2:#162A52; --line:#223A5E;
+  --ink:#ECF1FB; --ink-soft:#B7C4E0; --muted:#7D8FB8;
+  --blue:#2E86D8; --blue-deep:#1A5A9E; --blue-soft:#132A4C; --gold:#D4AF37; --gold-soft:#2B2410;
   --good:#36C27B; --good-soft:#102A20; --warn:#E3B23A; --warn-soft:#2E2412; --bad:#F0565B; --bad-soft:#331519;
-  --c-blue:#4C8DFF; --c-purple:#9B7BF0; --c-orange:#F0974A; --c-red:#F0565B; --c-amber:#E3B23A;
+  --c-blue:#2E86D8; --c-purple:#9B7BF0; --c-orange:#F0974A; --c-red:#F0565B; --c-amber:#E3B23A;
   --c-pink:#F06FA0; --c-teal:#34C6C6; --c-green:#36C27B;
   --radius:14px;
   --font-head:'Space Grotesk',Inter,system-ui,sans-serif;
@@ -141,6 +141,25 @@ main{flex:1;padding:20px 20px 48px;display:flex;flex-direction:column;gap:20px}
 
 select.status-select{font-size:12px;padding:4px 7px;border-radius:7px;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
 
+.btn-secondary{padding:9px 14px;border-radius:9px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font-size:13px;font-weight:600}
+.btn-secondary:hover{border-color:var(--blue);color:var(--blue)}
+.msg-box{background:var(--bg-elev);border:1px dashed var(--line);border-radius:9px;padding:12px;font-family:monospace;font-size:12.5px;white-space:pre-wrap;color:var(--ink-soft)}
+.reveal-toggle{background:none;border:none;color:var(--muted);font-size:11.5px;text-decoration:underline;padding:0}
+.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media (max-width:560px){.form-grid{grid-template-columns:1fr}}
+
+/* ---- crud ---- */
+.icon-btn{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:7px;border:1px solid var(--line);background:var(--surface);color:var(--ink-soft)}
+.icon-btn svg.ic{width:14px;height:14px}
+.icon-btn:hover{border-color:var(--blue);color:var(--blue)}
+.icon-btn.danger:hover{border-color:var(--bad);color:var(--bad)}
+.icon-btn.ok:hover{border-color:var(--good);color:var(--good)}
+.row-actions{display:flex;gap:6px;justify-content:flex-end}
+.inline-edit input,.inline-edit select{width:100%;padding:6px 8px;border-radius:7px;border:1px solid var(--line);background:var(--bg-elev);color:var(--ink);font-size:12.5px}
+.add-card{display:flex;flex-direction:column;gap:12px}
+.add-card .form-grid{align-items:end}
+.sidebar .nav-bottom{margin-top:auto;display:flex;flex-direction:column;gap:2px;padding-top:10px;border-top:1px solid var(--line)}
+
 @media (max-width:860px){
   .sidebar{display:none}
   .tabs-mobile{display:flex;gap:4px;overflow-x:auto;background:var(--bg-elev);border-bottom:1px solid var(--line)}
@@ -175,10 +194,14 @@ select.status-select{font-size:12px;padding:4px 7px;border-radius:7px;border:1px
       <a class="tab" data-route="teachers"><svg class="ic" viewBox="0 0 24 24"><path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v4c0 1.5 3 3 6 3s6-1.5 6-3v-4"/></svg>Ustozlar</a>
       <a class="tab" data-route="schedule"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>Dars jadvali</a>
       <a class="tab" data-route="groups"><svg class="ic" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Guruhlar</a>
+      <a class="tab" data-route="students"><svg class="ic" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>O'quvchilar</a>
       <a class="tab" data-route="absentees"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Kelmayotganlar</a>
       <a class="tab" data-route="anomalies"><svg class="ic" viewBox="0 0 24 24"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Anomaliyalar</a>
     </nav>
-    <div class="foot">Ma'lumot kutilmoqda</div>
+    <div class="nav-bottom">
+      <a class="tab" data-route="settings"><svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Sozlamalar</a>
+      <a class="tab" data-route="profile"><svg class="ic" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Profil</a>
+    </div>
   </aside>
 
   <div class="main-col">
@@ -193,9 +216,35 @@ select.status-select{font-size:12px;padding:4px 7px;border-radius:7px;border:1px
   </div>
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
 (function(){
 "use strict";
+
+/* ---------------- firebase (free shared backend for login list / groups / students) ----------------
+   Paste the config from Firebase Console > Project settings > Your apps > Web app here.
+   Until pasted, the app runs fine with the local defaults below — nothing breaks. */
+var FIREBASE_CONFIG = {
+  apiKey: "PASTE_API_KEY",
+  authDomain: "PASTE_PROJECT.firebaseapp.com",
+  projectId: "PASTE_PROJECT_ID",
+  storageBucket: "PASTE_PROJECT.appspot.com",
+  messagingSenderId: "PASTE_SENDER_ID",
+  appId: "PASTE_APP_ID"
+};
+var fb = { db:null, ready:false };
+try{
+  if(window.firebase && FIREBASE_CONFIG.apiKey.indexOf("PASTE")===-1){
+    firebase.initializeApp(FIREBASE_CONFIG);
+    fb.db = firebase.firestore();
+    fb.ready = true;
+  }
+}catch(e){ fb.ready=false; }
+function requireDb(){
+  if(!fb.ready){ alert("Baza hali ulanmagan. Bu qo'shish/o'chirish doimiy saqlanishi uchun avval Firebase ulanishi kerak — Claude bilan gaplashing."); return false; }
+  return true;
+}
 
 /* ---------------- icon library ---------------- */
 var ICONS = {
@@ -210,17 +259,27 @@ var ICONS = {
   dollar:'<circle cx="12" cy="12" r="10"/><path d="M12 6.5v11M15.2 9.3c0-1.3-1.5-2.3-3.2-2.3s-3.2 1-3.2 2.3 1.5 1.8 3.2 2.2 3.2 1 3.2 2.3-1.5 2.3-3.2 2.3-3.2-1-3.2-2.3"/>',
   play:'<circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16"/>',
   undo:'<path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>',
-  check:'<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>'
+  check:'<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>',
+  plus:'<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>',
+  edit:'<path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>',
+  trash:'<polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>',
+  x:'<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>',
+  save:'<polyline points="20 6 9 17 4 12"/>'
 };
+function iconSvg(name){ return '<svg class="ic" viewBox="0 0 24 24">'+ICONS[name]+'</svg>'; }
+function iconBtn(name,action,kind){
+  return '<button type="button" class="icon-btn'+(kind?(" "+kind):"")+'" data-act="'+action+'">'+iconSvg(name)+'</button>';
+}
 function icon(name,color){
   return '<span class="icon-chip" style="background:'+color+'22;color:'+color+'">'+
     '<svg class="ic" viewBox="0 0 24 24">'+ICONS[name]+'</svg></span>';
 }
 
-/* ---------------- credentials (maintained by Claude on request) ---------------- */
-var CREDENTIALS = [
-  { login:"admin", pass:"ILM2026", code:"0000", name:"Vaqtinchalik admin" }
+/* ---------------- credentials: come from Firebase (Sozlamalar) once connected, local default until then ---------------- */
+var DEFAULT_USERS = [
+  { login:"ubayd", pass:"ILM2026", code:"0000", name:"Ubayd" }
 ];
+var USERS = DEFAULT_USERS.slice();
 
 /* ---------------- weekly schedule vocabulary ---------------- */
 var DAYS = ["Dush","Sesh","Chor","Pay","Juma","Shan","Yak"];
@@ -229,8 +288,18 @@ var SLOTS = ["08:00-10:00","10:00-12:00","12:00-14:00","14:00-16:00","16:00-18:0
 /* ---------------- state: filled only from real db data, never invented ---------------- */
 var state = {
   seeded:false, updatedAt:null,
-  teachers:[], groups:[], absentees:[], anomalies:[], trend:[]
+  teachers:[], groups:[], groupsRaw:[], students:[], absentees:[], anomalies:[], trend:[]
 };
+function recomputeGroups(){
+  state.groups = (state.groupsRaw||[]).map(function(g){
+    var active=0, inactive=0;
+    (state.students||[]).forEach(function(s){
+      if(s.groupId===g.id){ if(s.status==="active") active++; else inactive++; }
+    });
+    return {id:g.id, name:g.name, teacher:g.teacher, schedule:g.schedule, active:active, inactive:inactive};
+  });
+}
+function groupName(id){ var g=(state.groups||[]).find(function(x){return x.id===id;}); return g?g.name:"—"; }
 
 /* ---------------- card definitions for the overview (no numbers until real data arrives) ---------------- */
 var OVERVIEW_CARDS = [
@@ -416,31 +485,305 @@ function renderSchedule(root){
   renderFree();
 }
 
+function groupsCollection(){ return fb.db.collection("groups"); }
+function addGroup(data){ if(!requireDb()) return; groupsCollection().add(data); }
+function updateGroup(id,data){ if(!requireDb()) return; groupsCollection().doc(id).set(data,{merge:true}); }
+function deleteGroup(id){
+  if(!requireDb()) return;
+  var hasStudents=(state.students||[]).some(function(s){return s.groupId===id;});
+  if(hasStudents){ alert("Avval bu guruhdagi o'quvchilarni boshqa guruhga ko'chiring yoki o'chiring."); return; }
+  if(!confirm("Guruhni o'chirishni tasdiqlaysizmi?")) return;
+  groupsCollection().doc(id).delete();
+}
+
 function renderGroups(root){
   root.appendChild(el("div",{class:"section-head"},[
     el("h2",{},["Guruhlar"]),
     el("span",{class:"meta"},[state.groups.length+" guruh"])
   ]));
+  if(!fb.ready) root.appendChild(el("div",{class:"hint"},["Baza ulanmagan — qo'shish/tahrirlash/o'chirish hozircha ishlamaydi. Firebase ulangach bu yerdan to'g'ridan-to'g'ri, hammaga, doimiy saqlanadigan holda boshqarish mumkin bo'ladi."]));
+
+  var addCard = el("div",{class:"card add-card"},[
+    el("div",{class:"card-title"},["+ Yangi guruh"]),
+    el("div",{class:"form-grid"},[
+      el("div",{class:"field"},[el("label",{},["Guruh nomi"]),el("input",{id:"ng-name"})]),
+      el("div",{class:"field"},[el("label",{},["Ustoz"]),el("input",{id:"ng-teacher"})]),
+      el("div",{class:"field"},[el("label",{},["Jadval"]),el("input",{id:"ng-schedule",placeholder:"Dush/Chor/Juma 16:00-18:00"})]),
+      el("button",{type:"button",class:"btn-secondary",id:"ng-submit"},["Qo'shish"])
+    ])
+  ]);
+  root.appendChild(addCard);
+  document.getElementById("ng-submit").addEventListener("click",function(){
+    var name=document.getElementById("ng-name").value.trim();
+    if(!name) return;
+    addGroup({ name:name, teacher:document.getElementById("ng-teacher").value.trim(), schedule:document.getElementById("ng-schedule").value.trim() });
+    document.getElementById("ng-name").value=""; document.getElementById("ng-teacher").value=""; document.getElementById("ng-schedule").value="";
+  });
+
   if(!state.groups.length){
-    root.appendChild(el("div",{class:"card"},[el("div",{class:"empty-note"},["Guruhlar ro'yxati hali yuborilmagan."])]));
+    root.appendChild(el("div",{class:"card"},[el("div",{class:"empty-note"},["Hali guruh qo'shilmagan."])]));
     return;
   }
   var wrap=el("div",{class:"tbl-wrap"});
   var table=el("table");
   table.appendChild(el("thead",{},[el("tr",{},[
     el("th",{},["Guruh"]),el("th",{},["Ustoz"]),el("th",{},["Jadval"]),
-    el("th",{},["Faol"]),el("th",{},["Faol emas"]),el("th",{},["Jami"])
+    el("th",{},["Faol"]),el("th",{},["Faol emas"]),el("th",{},["Jami"]),el("th",{},["Amallar"])
   ])]));
   var tbody=el("tbody");
   state.groups.forEach(function(g){
-    tbody.appendChild(el("tr",{},[
-      el("td",{},[g.name]),el("td",{},[g.teacher]),el("td",{},[g.schedule]),
-      el("td",{class:"num"},[String(g.active)]),
-      el("td",{class:"num"},[String(g.inactive)]),
-      el("td",{class:"num"},[String(g.active+g.inactive)])
-    ]));
+    var row = el("tr");
+    function paintView(){
+      row.innerHTML="";
+      row.appendChild(el("td",{},[g.name]));
+      row.appendChild(el("td",{},[g.teacher||"—"]));
+      row.appendChild(el("td",{},[g.schedule||"—"]));
+      row.appendChild(el("td",{class:"num"},[String(g.active)]));
+      row.appendChild(el("td",{class:"num"},[String(g.inactive)]));
+      row.appendChild(el("td",{class:"num"},[String(g.active+g.inactive)]));
+      row.appendChild(el("td",{},[el("div",{class:"row-actions",html:iconBtn("edit","edit")+iconBtn("trash","delete","danger")})]));
+    }
+    function paintEdit(){
+      row.innerHTML="";
+      row.appendChild(el("td",{class:"inline-edit"},[el("input",{value:g.name,id:"eg-name-"+g.id})]));
+      row.appendChild(el("td",{class:"inline-edit"},[el("input",{value:g.teacher||"",id:"eg-teacher-"+g.id})]));
+      row.appendChild(el("td",{class:"inline-edit"},[el("input",{value:g.schedule||"",id:"eg-schedule-"+g.id})]));
+      row.appendChild(el("td",{class:"num"},[String(g.active)]));
+      row.appendChild(el("td",{class:"num"},[String(g.inactive)]));
+      row.appendChild(el("td",{class:"num"},[String(g.active+g.inactive)]));
+      row.appendChild(el("td",{},[el("div",{class:"row-actions",html:iconBtn("save","save","ok")+iconBtn("x","cancel")})]));
+      document.getElementById("eg-name-"+g.id).value=g.name;
+    }
+    row.addEventListener("click",function(e){
+      var btn=e.target.closest("[data-act]"); if(!btn) return;
+      var act=btn.getAttribute("data-act");
+      if(act==="edit") paintEdit();
+      else if(act==="cancel") paintView();
+      else if(act==="delete") deleteGroup(g.id);
+      else if(act==="save"){
+        updateGroup(g.id,{
+          name:document.getElementById("eg-name-"+g.id).value.trim(),
+          teacher:document.getElementById("eg-teacher-"+g.id).value.trim(),
+          schedule:document.getElementById("eg-schedule-"+g.id).value.trim()
+        });
+      }
+    });
+    paintView();
+    tbody.appendChild(row);
   });
   table.appendChild(tbody); wrap.appendChild(table); root.appendChild(wrap);
+}
+
+/* ---------------- students ---------------- */
+function studentsCollection(){ return fb.db.collection("students"); }
+function addStudent(data){ if(!requireDb()) return; studentsCollection().add(data); }
+function updateStudent(id,data){ if(!requireDb()) return; studentsCollection().doc(id).set(data,{merge:true}); }
+function deleteStudent(id){
+  if(!requireDb()) return;
+  if(!confirm("O'quvchini o'chirishni tasdiqlaysizmi?")) return;
+  studentsCollection().doc(id).delete();
+}
+
+function renderStudents(root){
+  root.appendChild(el("div",{class:"section-head"},[
+    el("h2",{},["O'quvchilar"]),
+    el("span",{class:"meta"},[state.students.length+" o'quvchi"])
+  ]));
+  if(!fb.ready) root.appendChild(el("div",{class:"hint"},["Baza ulanmagan — qo'shish/tahrirlash/o'chirish hozircha ishlamaydi. Firebase ulangach bu yerdan to'g'ridan-to'g'ri boshqarish mumkin bo'ladi."]));
+
+  function groupOptions(selectedId){
+    var sel=el("select",{id:"ns-group"});
+    sel.appendChild(el("option",{value:""},["Guruh tanlang"]));
+    state.groups.forEach(function(g){
+      var o=el("option",{value:g.id},[g.name]);
+      if(g.id===selectedId) o.setAttribute("selected","selected");
+      sel.appendChild(o);
+    });
+    return sel;
+  }
+  var statusSel = el("select",{id:"ns-status"},[
+    el("option",{value:"active"},["Faol"]), el("option",{value:"inactive"},["Faol emas"])
+  ]);
+  var addCard = el("div",{class:"card add-card"},[
+    el("div",{class:"card-title"},["+ Yangi o'quvchi"]),
+    el("div",{class:"form-grid"},[
+      el("div",{class:"field"},[el("label",{},["Ism"]),el("input",{id:"ns-name"})]),
+      el("div",{class:"field"},[el("label",{},["Guruh"]),groupOptions(null)]),
+      el("div",{class:"field"},[el("label",{},["Holat"]),statusSel]),
+      el("div",{class:"field"},[el("label",{},["Telefon"]),el("input",{id:"ns-phone"})]),
+      el("button",{type:"button",class:"btn-secondary",id:"ns-submit"},["Qo'shish"])
+    ])
+  ]);
+  root.appendChild(addCard);
+  document.getElementById("ns-submit").addEventListener("click",function(){
+    var name=document.getElementById("ns-name").value.trim();
+    if(!name) return;
+    addStudent({
+      name:name,
+      groupId:document.getElementById("ns-group").value||null,
+      status:document.getElementById("ns-status").value,
+      phone:document.getElementById("ns-phone").value.trim()
+    });
+    document.getElementById("ns-name").value=""; document.getElementById("ns-phone").value="";
+  });
+
+  if(!state.students.length){
+    root.appendChild(el("div",{class:"card"},[el("div",{class:"empty-note"},["Hali o'quvchi qo'shilmagan."])]));
+    return;
+  }
+  var wrap=el("div",{class:"tbl-wrap"});
+  var table=el("table");
+  table.appendChild(el("thead",{},[el("tr",{},[
+    el("th",{},["Ism"]),el("th",{},["Guruh"]),el("th",{},["Holat"]),el("th",{},["Telefon"]),el("th",{},["Amallar"])
+  ])]));
+  var tbody=el("tbody");
+  state.students.forEach(function(s){
+    var row=el("tr");
+    function paintView(){
+      row.innerHTML="";
+      row.appendChild(el("td",{},[s.name]));
+      row.appendChild(el("td",{},[groupName(s.groupId)]));
+      row.appendChild(el("td",{},[badge(s.status==="active"?"Faol":"Faol emas", s.status==="active"?"good":"neutral")]));
+      row.appendChild(el("td",{},[s.phone||"—"]));
+      row.appendChild(el("td",{},[el("div",{class:"row-actions",html:iconBtn("edit","edit")+iconBtn("trash","delete","danger")})]));
+    }
+    function paintEdit(){
+      row.innerHTML="";
+      row.appendChild(el("td",{class:"inline-edit"},[el("input",{value:s.name,id:"es-name-"+s.id})]));
+      var gSel=groupOptions(s.groupId); gSel.id="es-group-"+s.id;
+      row.appendChild(el("td",{class:"inline-edit"},[gSel]));
+      var stSel=el("select",{class:"inline-edit",id:"es-status-"+s.id},[
+        el("option",{value:"active"},["Faol"]), el("option",{value:"inactive"},["Faol emas"])
+      ]);
+      stSel.value=s.status;
+      row.appendChild(el("td",{},[stSel]));
+      row.appendChild(el("td",{class:"inline-edit"},[el("input",{value:s.phone||"",id:"es-phone-"+s.id})]));
+      row.appendChild(el("td",{},[el("div",{class:"row-actions",html:iconBtn("save","save","ok")+iconBtn("x","cancel")})]));
+    }
+    row.addEventListener("click",function(e){
+      var btn=e.target.closest("[data-act]"); if(!btn) return;
+      var act=btn.getAttribute("data-act");
+      if(act==="edit") paintEdit();
+      else if(act==="cancel") paintView();
+      else if(act==="delete") deleteStudent(s.id);
+      else if(act==="save"){
+        updateStudent(s.id,{
+          name:document.getElementById("es-name-"+s.id).value.trim(),
+          groupId:document.getElementById("es-group-"+s.id).value||null,
+          status:document.getElementById("es-status-"+s.id).value,
+          phone:document.getElementById("es-phone-"+s.id).value.trim()
+        });
+      }
+    });
+    paintView();
+    tbody.appendChild(row);
+  });
+  table.appendChild(tbody); wrap.appendChild(table); root.appendChild(wrap);
+}
+
+/* ---------------- settings (manual login management) ---------------- */
+function usersCollection(){ return fb.db.collection("app_users"); }
+function addOrUpdateUser(login,data){ if(!requireDb()) return; usersCollection().doc(login).set(data,{merge:true}); }
+function deleteUser(login){
+  if(!requireDb()) return;
+  var current=null; try{ current=sessionStorage.getItem("ilm-nazorat-user"); }catch(e){}
+  if(login===current){ alert("O'zingiz kirgan loginni o'chira olmaysiz."); return; }
+  if(!confirm("Bu login o'chirilsin, tasdiqlaysizmi?")) return;
+  usersCollection().doc(login).delete();
+}
+var revealed = {};
+function renderSettings(root){
+  root.appendChild(el("div",{class:"section-head"},[
+    el("h2",{},["Sozlamalar"]),
+    el("span",{class:"meta"},[USERS.length+" kirish huquqi"])
+  ]));
+  if(!fb.ready) root.appendChild(el("div",{class:"hint"},["Baza ulanmagan — bu ro'yxat hozircha faqat shu brauzerda, vaqtinchalik ko'rinadi. Firebase ulangach, bu yerda qo'shgan har bir login hammaga va doimiy saqlanadi."]));
+
+  var addCard = el("div",{class:"card add-card"},[
+    el("div",{class:"card-title"},["+ Yangi foydalanuvchi"]),
+    el("div",{class:"form-grid"},[
+      el("div",{class:"field"},[el("label",{},["Login"]),el("input",{id:"nu-login"})]),
+      el("div",{class:"field"},[el("label",{},["Ism"]),el("input",{id:"nu-name"})]),
+      el("div",{class:"field"},[el("label",{},["Parol"]),el("input",{id:"nu-pass"})]),
+      el("div",{class:"field"},[el("label",{},["Maxfiy kod"]),el("input",{id:"nu-code"})]),
+      el("button",{type:"button",class:"btn-secondary",id:"nu-submit"},["Qo'shish"])
+    ])
+  ]);
+  root.appendChild(addCard);
+  document.getElementById("nu-submit").addEventListener("click",function(){
+    var login=document.getElementById("nu-login").value.trim();
+    if(!login) return;
+    addOrUpdateUser(login,{
+      name:document.getElementById("nu-name").value.trim()||login,
+      pass:document.getElementById("nu-pass").value,
+      code:document.getElementById("nu-code").value.trim()
+    });
+    document.getElementById("nu-login").value=""; document.getElementById("nu-name").value="";
+    document.getElementById("nu-pass").value=""; document.getElementById("nu-code").value="";
+  });
+
+  var wrap=el("div",{class:"tbl-wrap"});
+  var table=el("table");
+  table.appendChild(el("thead",{},[el("tr",{},[
+    el("th",{},["Login"]),el("th",{},["Ism"]),el("th",{},["Parol"]),el("th",{},["Kod"]),el("th",{},["Amallar"])
+  ])]));
+  var tbody=el("tbody");
+  USERS.forEach(function(u){
+    var row=el("tr");
+    function masked(v){ return revealed[u.login] ? v : "••••••"; }
+    function paintView(){
+      row.innerHTML="";
+      row.appendChild(el("td",{},[u.login]));
+      row.appendChild(el("td",{},[u.name]));
+      row.appendChild(el("td",{},[masked(u.pass)+" "]));
+      row.lastChild.appendChild(el("button",{type:"button",class:"reveal-toggle",["data-act"]:"reveal"},[revealed[u.login]?"yashir":"ko'rsat"]));
+      row.appendChild(el("td",{},[masked(u.code)]));
+      row.appendChild(el("td",{},[el("div",{class:"row-actions",html:iconBtn("edit","edit")+iconBtn("trash","delete","danger")})]));
+    }
+    function paintEdit(){
+      row.innerHTML="";
+      row.appendChild(el("td",{},[u.login]));
+      row.appendChild(el("td",{class:"inline-edit"},[el("input",{value:u.name,id:"eu-name-"+u.login})]));
+      row.appendChild(el("td",{class:"inline-edit"},[el("input",{value:u.pass,id:"eu-pass-"+u.login})]));
+      row.appendChild(el("td",{class:"inline-edit"},[el("input",{value:u.code,id:"eu-code-"+u.login})]));
+      row.appendChild(el("td",{},[el("div",{class:"row-actions",html:iconBtn("save","save","ok")+iconBtn("x","cancel")})]));
+    }
+    row.addEventListener("click",function(e){
+      var btn=e.target.closest("[data-act]"); if(!btn) return;
+      var act=btn.getAttribute("data-act");
+      if(act==="edit") paintEdit();
+      else if(act==="cancel") paintView();
+      else if(act==="delete") deleteUser(u.login);
+      else if(act==="reveal"){ revealed[u.login]=!revealed[u.login]; paintView(); }
+      else if(act==="save"){
+        addOrUpdateUser(u.login,{
+          name:document.getElementById("eu-name-"+u.login).value.trim()||u.login,
+          pass:document.getElementById("eu-pass-"+u.login).value,
+          code:document.getElementById("eu-code-"+u.login).value.trim()
+        });
+      }
+    });
+    paintView();
+    tbody.appendChild(row);
+  });
+  table.appendChild(tbody); wrap.appendChild(table); root.appendChild(wrap);
+}
+
+/* ---------------- profile ---------------- */
+function renderProfile(root){
+  var saved=null; try{ saved=sessionStorage.getItem("ilm-nazorat-user"); }catch(e){}
+  var u=USERS.find(function(x){return x.login===saved;}) || {name:"—",login:"—"};
+  root.appendChild(el("div",{class:"section-head"},[el("h2",{},["Profil"])]));
+  var card=el("div",{class:"card"},[
+    el("div",{class:"card-title"},["Joriy foydalanuvchi"]),
+    el("div",{style:"display:flex;flex-direction:column;gap:6px;margin-bottom:16px"},[
+      el("div",{},[el("b",{},["Ism: "]),document.createTextNode(u.name)]),
+      el("div",{},[el("b",{},["Login: "]),document.createTextNode(u.login)])
+    ]),
+    el("button",{type:"button",class:"btn-secondary",id:"profile-logout"},["Chiqish"])
+  ]);
+  root.appendChild(card);
+  document.getElementById("profile-logout").addEventListener("click",doLogout);
 }
 
 function renderAbsentees(root){
@@ -493,10 +836,11 @@ function renderAnomalies(root){
 /* ---------------- routing ---------------- */
 var ROUTES = {
   overview: renderOverview, teachers: renderTeachers, schedule: renderSchedule,
-  groups: renderGroups, absentees: renderAbsentees, anomalies: renderAnomalies
+  groups: renderGroups, students: renderStudents, absentees: renderAbsentees, anomalies: renderAnomalies,
+  settings: renderSettings, profile: renderProfile
 };
-var ROUTE_ORDER = ["overview","teachers","schedule","groups","absentees","anomalies"];
-var ROUTE_LABEL = {overview:"Umumiy",teachers:"Ustozlar",schedule:"Jadval",groups:"Guruhlar",absentees:"Kelmayotganlar",anomalies:"Anomaliya"};
+var ROUTE_ORDER = ["overview","teachers","schedule","groups","students","absentees","anomalies","settings","profile"];
+var ROUTE_LABEL = {overview:"Umumiy",teachers:"Ustozlar",schedule:"Jadval",groups:"Guruhlar",students:"O'quvchilar",absentees:"Kelmayotganlar",anomalies:"Anomaliya",settings:"Sozlamalar",profile:"Profil"};
 
 (function buildMobileTabs(){
   var host=document.getElementById("tabs-mobile");
@@ -539,7 +883,7 @@ document.addEventListener("click",function(e){
 
 /* ---------------- auth ---------------- */
 function tryLogin(login,pass,code){
-  return CREDENTIALS.find(function(c){ return c.login===login && c.pass===pass && c.code===code; });
+  return USERS.find(function(c){ return c.login===login && c.pass===pass && c.code===code; });
 }
 function showApp(user){
   document.getElementById("login-screen").hidden=true;
@@ -548,6 +892,13 @@ function showApp(user){
   try{ sessionStorage.setItem("ilm-nazorat-user", user.login); }catch(e){}
   if(!location.hash) location.hash="overview";
   renderRoute();
+}
+function doLogout(){
+  try{ sessionStorage.removeItem("ilm-nazorat-user"); }catch(e){}
+  document.getElementById("app-shell").hidden=true;
+  document.getElementById("login-screen").hidden=false;
+  document.getElementById("f-pass").value="";
+  document.getElementById("f-code").value="";
 }
 document.getElementById("login-form").addEventListener("submit",function(e){
   e.preventDefault();
@@ -559,44 +910,36 @@ document.getElementById("login-form").addEventListener("submit",function(e){
   if(user){ err.textContent=""; showApp(user); }
   else { err.textContent="Login, parol yoki kod xato."; }
 });
-document.getElementById("logout-btn").addEventListener("click",function(){
-  try{ sessionStorage.removeItem("ilm-nazorat-user"); }catch(e){}
-  document.getElementById("app-shell").hidden=true;
-  document.getElementById("login-screen").hidden=false;
-  document.getElementById("f-pass").value="";
-  document.getElementById("f-code").value="";
-});
+document.getElementById("logout-btn").addEventListener("click",doLogout);
 (function restoreSession(){
   try{
     var saved=sessionStorage.getItem("ilm-nazorat-user");
     if(saved){
-      var u=CREDENTIALS.find(function(c){return c.login===saved;});
+      var u=USERS.find(function(c){return c.login===saved;});
       if(u) showApp(u);
     }
   }catch(e){}
 })();
 
-/* ---------------- live data via db capability (populated only once Claude writes real data) ---------------- */
-function normalizeRemote(doc){
-  state.seeded = true;
-  state.updatedAt = doc.updatedAt || null;
-  state.teachers = doc.teachers || [];
-  state.groups = doc.groups || [];
-  state.absentees = doc.absentees || [];
-  state.anomalies = doc.anomalies || [];
-  state.trend = doc.trend || [];
-  if(!document.getElementById("app-shell").hidden) renderRoute();
+/* ---------------- live data from Firebase (users / groups / students); dashboard numbers stay as explanatory cards until real tables are sent ---------------- */
+function appVisible(){ return !document.getElementById("app-shell").hidden; }
+if(fb.ready){
+  usersCollection().onSnapshot(function(snap){
+    var arr=[]; snap.forEach(function(d){ arr.push(Object.assign({login:d.id},d.data())); });
+    USERS = arr.length ? arr : DEFAULT_USERS.slice();
+    if(appVisible()) renderRoute();
+  });
+  groupsCollection().onSnapshot(function(snap){
+    var arr=[]; snap.forEach(function(d){ arr.push(Object.assign({id:d.id},d.data())); });
+    state.groupsRaw=arr; recomputeGroups();
+    if(appVisible()) renderRoute();
+  });
+  studentsCollection().onSnapshot(function(snap){
+    var arr=[]; snap.forEach(function(d){ arr.push(Object.assign({id:d.id},d.data())); });
+    state.students=arr; recomputeGroups();
+    if(appVisible()) renderRoute();
+  });
 }
-(async function connectDb(){
-  try{
-    if(!window.claude || !window.claude.use) return;
-    var db = await window.claude.use("db");
-    if(!db) return;
-    db.doc("app/data").onSnapshot(function(snap){
-      if(snap.exists){ normalizeRemote(snap.data()); }
-    }, function(e){ /* silent: keep showing explanatory empty state */ });
-  }catch(e){ /* capability unavailable in this view */ }
-})();
 
 })();
 </script>
